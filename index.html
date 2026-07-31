@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>F1 Study Career Mode 2026-2027 | Exam Race Strategy</title>
+    <meta name="description" content="Mô phỏng mùa giải F1 học tập - IOE, Violympic, VioEdu, HSG - 24 Grand Prix, Driver Rating, XP, Achievement">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@200;300;400;500;600;700;800;900&family=Lexend+Mega:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3CC2F5;
+            --primary-dark: #2A9FD4;
+            --primary-light: #6DD5FF;
+            --primary-glow: rgba(60, 194, 245, 0.3);
+            --primary-soft: rgba(60, 194, 245, 0.08);
+            --accent: #FF6B35;
+            --accent2: #FFD700;
+            --success: #17E58C;
+            --danger: #FF2D55;
+            --warning: #FF9500;
+            --purple: #9D4DFF;
+            --bg-dark: #0A0E17;
+            --bg-panel: #111827;
+            --bg-panel2: #1A2235;
+            --bg-panel3: #1F2A3F;
+            --border: #2A3345;
+            --border-bright: #3D4A63;
+            --text: #F0F4FF;
+            --text-dim: #C5CDE0;
+            --text-muted: #8B95AD;
+            --text-muted2: #636D85;
+            --r-sm: 8px;
+            --r-md: 12px;
+            --r-lg: 18px;
+            --r-xl: 24px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --shadow-primary: 0 6px 24px rgba(60, 194, 245, 0.25);
+            --fs-2xs: 10px;
+            --fs-xs: 11.5px;
+            --fs-sm: 13px;
+            --fs-base: 14.5px;
+            --fs-md: 16px;
+            --fs-lg: 19px;
+            --fs-xl: 24px;
+            --fs-2xl: 32px;
+            --fs-3xl: 44px;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --t-fast: 0.2s var(--ease);
+            --t-smooth: 0.35s var(--ease);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        *::selection {
+            background: var(--primary);
+            color: #fff;
+        }
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+        body {
+            font-family: 'Lexend', 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.5;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: linear-gradient(90deg, rgba(60, 194, 245, 0.025) 1px, transparent 1px),
+                linear-gradient(rgba(60, 194, 245, 0.025) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, black 35%, transparent 100%);
+        }
+        .bg-glow {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse 900px 500px at 20% -10%, rgba(60, 194, 245, 0.1), transparent 55%),
+                radial-gradient(ellipse 700px 500px at 85% 10%, rgba(60, 194, 245, 0.05), transparent 50%),
+                radial-gradient(ellipse 800px 600px at 50% 110%, rgba(42, 159, 212, 0.06), transparent 55%);
+        }
+        .bg-sweep {
+            position: fixed;
+            top: 0;
+            left: -40%;
+            width: 40%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background: linear-gradient(100deg, transparent, rgba(60, 194, 245, 0.03) 45%, transparent 90%);
+            animation: sweep 16s linear infinite;
+        }
+        @keyframes sweep {
+            0% { left: -40%; }
+            100% { left: 120%; }
+        }
+
+        .app {
+            position: relative;
+            z-index: 1;
+            max-width: 1520px;
+            margin: 0 auto;
+            padding: 0 16px 48px;
+        }
+
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: var(--bg-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            transition: opacity 0.6s, visibility 0.6s;
+        }
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            border-radius: 20px;
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+            font-size: 28px;
+            color: #fff;
+            box-shadow: 0 8px 40px rgba(60, 194, 245, 0.5);
+            animation: loadingPulse 1.5s infinite;
+        }
+        @keyframes loadingPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        .loading-bar {
+            width: 200px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .loading-bar-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+            animation: loadingFill 1.8s var(--ease) infinite;
+        }
+        @keyframes loadingFill {
+            0% { width: 0%; margin-left: 0; }
+            50% { width: 60%; margin-left: 20%; }
+            100% { width: 0%; margin-left: 100%; }
+        }
+        .loading-text {
+            color: var(--text-muted);
+            font-size: var(--fs-sm);
+            letter-spacing: 1px;
+        }
+
+        .top-bar {
+            background: linear-gradient(180deg, rgba(17, 24, 39, 0.98), rgba(17, 24, 39, 0.95));
+            border-bottom: 1px solid var(--border);
+            padding: 8px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(16px);
+        }
+        .top-bar-inner {
+            max-width: 1520px;
+            margin: 0 auto;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .top-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .top-logo-icon {
+            width: 38px;
+            height: 38px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+            font-size: 16px;
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(60, 194, 245, 0.35);
+        }
+        .top-logo-text h1 {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            color: var(--text);
+            line-height: 1.1;
+        }
+        .top-logo-text span {
+            font-size: var(--fs-2xs);
+            color: var(--text-muted);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            display: block;
+        }
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .badge-live {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(60, 194, 245, 0.1);
+            border: 1px solid rgba(60, 194, 245, 0.4);
+            padding: 6px 14px 6px 10px;
+            border-radius: 20px;
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            color: var(--primary-light);
+            white-space: nowrap;
+        }
+        .badge-live-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 8px var(--primary);
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.7); }
+        }
+        .badge-clock {
+            background: var(--bg-panel2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: var(--fs-xs);
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            color: var(--primary-light);
+            letter-spacing: 0.4px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            white-space: nowrap;
+        }
+        .badge-clock::before {
+            content: '●';
+            font-size: 7px;
+            color: var(--primary);
+        }
+        .badge-driver {
+            background: var(--bg-panel2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 5px 14px 5px 8px;
+            font-size: var(--fs-xs);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            white-space: nowrap;
+            color: var(--text-dim);
+        }
+        .badge-driver-avatar {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1A3A5C, #2A5A8C);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 10px;
+            border: 1.5px solid var(--primary);
+            color: #fff;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+            margin: 16px 0 20px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            padding: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+        .nav-tab {
+            flex: 1 1 auto;
+            white-space: nowrap;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            padding: 10px 14px;
+            border-radius: var(--r-md);
+            cursor: pointer;
+            transition: all var(--t-fast);
+            font-family: 'Lexend', sans-serif;
+            min-width: fit-content;
+        }
+        .nav-tab:hover { color: var(--text); background: var(--bg-panel2); }
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            box-shadow: var(--shadow-primary);
+            font-weight: 700;
+        }
+
+        .view { display: none; animation: fadeSlide 0.4s var(--ease); }
+        .view.active { display: block; }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 18px;
+            align-items: start;
+        }
+        @media (max-width: 1024px) { .grid { grid-template-columns: 1fr; } }
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            position: sticky;
+            top: 80px;
+        }
+        @media (max-width: 1024px) { .sidebar { position: static; } }
+        .main {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .panel-header {
+            background: linear-gradient(90deg, rgba(60, 194, 245, 0.12), transparent 70%);
+            padding: 12px 16px;
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            color: var(--text-dim);
+        }
+        .panel-header .ph-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .panel-header .ph-left::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: var(--primary);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+        .panel-header .ph-tag {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: var(--bg-panel2);
+            border: 1px solid var(--border-bright);
+            padding: 3px 8px;
+            border-radius: 5px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .panel-body { padding: 16px; }
+
+        label {
+            display: block;
+            font-size: var(--fs-xs);
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        .field { margin-bottom: 14px; }
+        .field:last-child { margin-bottom: 0; }
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        select, input[type="number"], input[type="text"], input[type="time"] {
+            width: 100%;
+            background: var(--bg-panel2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 12px;
+            border-radius: var(--r-sm);
+            font-family: 'Lexend', sans-serif;
+            font-size: var(--fs-base);
+            outline: none;
+            transition: border-color var(--t-fast), box-shadow var(--t-fast);
+            appearance: none;
+        }
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B95AD' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+        select:focus, input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-soft);
+        }
+        .helper {
+            font-size: var(--fs-2xs);
+            color: var(--text-muted2);
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            border: none;
+            padding: 14px 20px;
+            font-family: 'Lexend', sans-serif;
+            font-size: var(--fs-base);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: var(--r-lg);
+            cursor: pointer;
+            transition: all var(--t-smooth);
+            box-shadow: var(--shadow-primary);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            text-align: center;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transition: left 0.6s var(--ease);
+        }
+        .btn:hover::before { left: 130%; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 34px rgba(60, 194, 245, 0.45); }
+        .btn:active { transform: translateY(0); }
+        .btn-sm {
+            background: var(--bg-panel2);
+            border: 1px solid var(--border-bright);
+            color: var(--text);
+            padding: 8px 14px;
+            font-family: 'Lexend', sans-serif;
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            border-radius: var(--r-sm);
+            cursor: pointer;
+            transition: all var(--t-fast);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .btn-sm:hover { background: var(--bg-panel3); border-color: var(--text-muted); }
+        .btn-xs { padding: 4px 10px; font-size: var(--fs-2xs); border-radius: 5px; }
+        .btn-danger { border-color: var(--danger); color: var(--danger); }
+        .btn-success { border-color: var(--success); color: var(--success); }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            padding: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--ic, var(--primary));
+            opacity: 0.7;
+        }
+        .card h4 {
+            font-size: var(--fs-2xs);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .card .val {
+            font-size: var(--fs-xl);
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+            color: var(--text);
+        }
+        .card .val small {
+            font-size: var(--fs-sm);
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-left: 2px;
+        }
+        .card .sub {
+            font-size: 10px;
+            color: var(--text-muted2);
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--fs-sm);
+        }
+        table thead th {
+            text-align: left;
+            font-size: var(--fs-2xs);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 8px 8px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        table tbody td {
+            padding: 9px 8px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        table tbody tr:last-child td { border-bottom: none; }
+        table tbody tr:hover { background: rgba(255, 255, 255, 0.015); }
+        .pos-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
+            font-weight: 800;
+            font-size: 11px;
+            background: var(--bg-panel2);
+            color: var(--text-dim);
+        }
+        .pos-badge.p1 { background: linear-gradient(135deg, #FFD700, #B8860B); color: #1a1a0a; }
+        .pos-badge.p2 { background: linear-gradient(135deg, #D8D8E0, #9A9AA8); color: #1a1a1a; }
+        .pos-badge.p3 { background: linear-gradient(135deg, #CD7F32, #8A5423); color: #fff; }
+        .pts { font-weight: 800; color: var(--primary-light); font-variant-numeric: tabular-nums; }
+
+        .gauge-block { margin-bottom: 14px; }
+        .gauge-block:last-child { margin-bottom: 0; }
+        .gauge-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 5px;
+            font-size: var(--fs-sm);
+        }
+        .gauge-row .g-label { font-weight: 600; color: var(--text-dim); }
+        .gauge-row .g-val { font-weight: 800; font-variant-numeric: tabular-nums; }
+        .gauge-bar {
+            height: 10px;
+            background: var(--bg-panel2);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 6px;
+            border: 1px solid var(--border);
+        }
+        .gauge-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.4s var(--ease);
+        }
+
+        .seg {
+            display: flex;
+            background: var(--bg-panel2);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            padding: 3px;
+            gap: 2px;
+        }
+        .seg button {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: var(--fs-xs);
+            font-weight: 600;
+            padding: 8px 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all var(--t-fast);
+            font-family: 'Lexend', sans-serif;
+            white-space: nowrap;
+        }
+        .seg button.active {
+            background: var(--bg-panel3);
+            color: var(--text);
+            box-shadow: inset 0 0 0 1px var(--border-bright);
+        }
+
+        .tyre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .tyre-card {
+            background: var(--bg-panel2);
+            border: 2px solid var(--border);
+            border-radius: var(--r-sm);
+            padding: 10px 6px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--t-fast);
+            position: relative;
+            overflow: hidden;
+        }
+        .tyre-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--tc, var(--text-muted));
+            opacity: 0.5;
+            transition: opacity var(--t-fast);
+        }
+        .tyre-card:hover { border-color: var(--border-bright); transform: translateY(-1px); }
+        .tyre-card.active {
+            border-color: var(--tc, var(--primary));
+            background: color-mix(in srgb, var(--tc, var(--primary)) 10%, var(--bg-panel2));
+            box-shadow: 0 0 16px color-mix(in srgb, var(--tc, var(--primary)) 25%, transparent);
+        }
+        .tyre-card.active::before { opacity: 1; }
+        .tyre-ring {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 4px solid var(--tc, var(--text-muted));
+            margin: 0 auto 5px;
+            position: relative;
+            background: repeating-radial-gradient(circle, transparent 0, transparent 3px, rgba(255, 255, 255, 0.03) 4px);
+        }
+        .tyre-ring::after {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border-radius: 50%;
+            background: var(--bg-dark);
+        }
+        .tyre-code { font-size: var(--fs-md); font-weight: 800; color: var(--tc, var(--text)); }
+        .tyre-name { font-size: var(--fs-xs); font-weight: 600; color: var(--text-dim); }
+        .tyre-desc { font-size: 9px; color: var(--text-muted); line-height: 1.3; }
+        .tyre-card[data-tyre="C1"] { --tc: #B7B7C4; }
+        .tyre-card[data-tyre="C2"] { --tc: #6EC6FF; }
+        .tyre-card[data-tyre="C3"] { --tc: #FFD700; }
+        .tyre-card[data-tyre="C4"] { --tc: #FF6B35; }
+        .tyre-card[data-tyre="C5"] { --tc: #FF2D55; }
+        .tyre-card[data-tyre="WET-I"] { --tc: #1FB35A; }
+        .tyre-card.span2 { grid-column: span 2; }
+
+        .gp-status {
+            font-size: var(--fs-2xs);
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        .gp-status.pending { background: rgba(139, 149, 173, 0.15); color: var(--text-muted); }
+        .gp-status.finished { background: rgba(23, 229, 140, 0.15); color: var(--success); }
+        .gp-status.dnf { background: rgba(255, 45, 85, 0.15); color: var(--danger); }
+        .gp-status.dnq { background: rgba(255, 149, 0, 0.15); color: var(--warning); }
+
+        .ach-card {
+            background: var(--bg-panel2);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            padding: 12px;
+            text-align: center;
+            transition: all var(--t-fast);
+        }
+        .ach-card.unlocked {
+            border-color: var(--accent2);
+            box-shadow: 0 0 16px rgba(255, 215, 0, 0.15);
+        }
+        .ach-icon { font-size: 32px; margin-bottom: 6px; }
+        .ach-name { font-size: var(--fs-xs); font-weight: 700; color: var(--text); margin-bottom: 2px; }
+        .ach-cond { font-size: 9px; color: var(--text-muted); line-height: 1.3; }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            padding: 16px;
+        }
+        .modal {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            padding: 24px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .modal h3 { font-size: var(--fs-lg); margin-bottom: 16px; color: var(--text); }
+
+        .toast-wrap {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 400;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .toast {
+            background: var(--bg-panel2);
+            border: 1px solid var(--border-bright);
+            border-left: 4px solid var(--primary);
+            border-radius: var(--r-sm);
+            padding: 11px 16px;
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+            animation: toastIn 0.35s var(--ease-spring), toastOut 0.35s ease 3s forwards;
+            max-width: 280px;
+            pointer-events: auto;
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes toastOut {
+            to { opacity: 0; transform: translateX(30px); }
+        }
+
+        .timer-display {
+            font-family: 'Lexend Mega', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 1px;
+            color: var(--primary-light);
+            text-shadow: 0 0 24px rgba(60, 194, 245, 0.3);
+            text-align: center;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: var(--fs-2xs);
+            color: var(--text-muted2);
+            letter-spacing: 1.2px;
+            padding: 20px 0;
+        }
+        .footer-flags {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin-bottom: 6px;
+        }
+        .footer-flags span { width: 20px; height: 3px; border-radius: 2px; }
+
+        .mt-8 { margin-top: 8px; }
+        .mt-12 { margin-top: 12px; }
+        .mt-16 { margin-top: 16px; }
+        .text-center { text-align: center; }
+        .flex-between { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .text-warning { color: var(--warning); }
+        .text-accent { color: var(--accent2); }
+        .scroll-x { overflow-x: auto; }
+        @media (max-width: 700px) {
+            .hide-mobile { display: none; }
+            .timer-display { font-size: 36px; }
+            table { font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+    <div class="bg-sweep"></div>
+
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">F1</div>
+        <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+        <div class="loading-text">LOADING CAREER MODE 2026-2027...</div>
+    </div>
+
+    <div class="top-bar">
+        <div class="top-bar-inner">
+            <div class="top-logo">
+                <div class="top-logo-icon">F1</div>
+                <div class="top-logo-text"><h1>Study Career Mode</h1><span>2026-2027 Season</span></div>
+            </div>
+            <div class="top-actions">
+                <div class="badge-driver" id="topDriverBadge"><div class="badge-driver-avatar" id="topAvatar">DR</div><span id="topDriverName">Driver</span></div>
+                <div class="badge-clock" id="liveClock">--:--:--</div>
+                <div class="badge-live"><div class="badge-live-dot"></div>LIVE</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app">
+        <div class="nav-tabs" id="navTabs">
+            <button class="nav-tab active" data-view="dashboard">🏠 Dashboard</button>
+            <button class="nav-tab" data-view="calendar">📅 Calendar</button>
+            <button class="nav-tab" data-view="strategy">🎯 Strategy</button>
+            <button class="nav-tab" data-view="standings">🏆 Standings</button>
+            <button class="nav-tab" data-view="training">📚 Training</button>
+            <button class="nav-tab" data-view="achievements">⭐ Achievements</button>
+            <button class="nav-tab" data-view="profile">👤 Profile</button>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div class="view active" id="view-dashboard">
+            <div class="grid">
+                <aside class="sidebar">
+                    <div class="panel">
+                        <div class="panel-header"><div class="ph-left">Driver Card</div><span class="ph-tag">PROFILE</span></div>
+                        <div class="panel-body text-center">
+                            <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#1A3A5C,#2A5A8C);display:grid;place-items:center;font-weight:800;font-size:22px;border:3px solid var(--primary);color:#fff;margin:0 auto 10px;" id="dashAvatar">DR</div>
+                            <h3 style="font-size:var(--fs-md);" id="dashName">Driver</h3>
+                            <p style="font-size:var(--fs-xs);color:var(--text-muted);" id="dashClass">Lớp: --</p>
+                            <p style="font-size:var(--fs-xs);color:var(--text-muted);" id="dashNumber">#26</p>
+                            <div class="gauge-block mt-12">
+                                <div class="gauge-row"><span class="g-label">Driver Rating</span><span class="g-val" id="dashRatingVal">50</span></div>
+                                <div class="gauge-bar"><div class="gauge-fill" id="dashRatingBar" style="width:50%;background:linear-gradient(90deg,var(--primary),var(--success));"></div></div>
+                                <span class="helper" id="dashRatingLabel">Rookie</span>
+                            </div>
+                            <div class="gauge-block">
+                                <div class="gauge-row"><span class="g-label">XP</span><span class="g-val" id="dashXpVal">0</span></div>
+                                <div class="gauge-bar"><div class="gauge-fill" id="dashXpBar" style="width:0%;background:linear-gradient(90deg,var(--purple),var(--primary));"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header"><div class="ph-left">Quick Stats</div></div>
+                        <div class="panel-body">
+                            <div class="cards" style="grid-template-columns:1fr 1fr;">
+                                <div class="card" style="--ic:var(--accent2);"><h4>Wins</h4><div class="val" id="dashWins">0</div></div>
+                                <div class="card" style="--ic:var(--primary);"><h4>Podiums</h4><div class="val" id="dashPodiums">0</div></div>
+                                <div class="card" style="--ic:var(--purple);"><h4>Poles</h4><div class="val" id="dashPoles">0</div></div>
+                                <div class="card" style="--ic:var(--success);"><h4>Points</h4><div class="val" id="dashPoints">0</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+                <section class="main">
+                    <div class="panel">
+                        <div class="panel-header"><div class="ph-left">Season Overview</div><span class="ph-tag">2026-2027</span></div>
+                        <div class="panel-body">
+                            <div class="cards">
+                                <div class="card" style="--ic:var(--primary);"><h4>GP Completed</h4><div class="val" id="dashCompleted">0<small>/24</small></div></div>
+                                <div class="card" style="--ic:var(--accent2);"><h4>Championship Position</h4><div class="val" id="dashChampPos">--</div></div>
+                                <div class="card" style="--ic:var(--success);"><h4>Total Points</h4><div class="val" id="dashTotalPoints">0</div></div>
+                                <div class="card" style="--ic:var(--purple);"><h4>Achievements</h4><div class="val" id="dashAchCount">0<small>/20</small></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header"><div class="ph-left">Upcoming GP</div></div>
+                        <div class="panel-body" id="upcomingGP"></div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header"><div class="ph-left">Recent Results</div></div>
+                        <div class="panel-body scroll-x" id="recentResults">
+                            <p style="color:var(--text-muted);font-size:var(--fs-sm);">Chưa có kết quả nào. Hãy bắt đầu mùa giải!</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- CALENDAR -->
+        <div class="view" id="view-calendar">
+            <div class="panel">
+                <div class="panel-header"><div class="ph-left">Championship Calendar – 24 Grand Prix</div><span class="ph-tag">2026-2027</span></div>
+                <div class="panel-body scroll-x">
+                    <table>
+                        <thead><tr><th>Rd</th><th>Grand Prix</th><th>Sự kiện</th><th>Loại</th><th>Trạng thái</th><th>Hạng</th><th>Điểm</th><th>Bonus</th><th>Hành động</th></tr></thead>
+                        <tbody id="calendarBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- STRATEGY -->
+        <div class="view" id="view-strategy">
+            <div class="grid">
+                <aside class="sidebar">
+                    <div class="panel">
+                        <div class="panel-header"><div class="ph-left">Tyre Strategy</div><span class="ph-tag" id="tyreTag">C3</span></div>
+                        <div class="panel-body">
+                            <div class="tyre-grid" id="tyreGrid">
+                                <div class="tyre-card" data-tyre="C1"><div class="tyre-ring"></div><div class="tyre-code">C1</div><div class="tyre-name">Precision</div><div class="tyre-desc">Chậm • Cực chắc</div></div>
+                                <div class="tyre-card" data-tyre="C2"><div class="tyre-ring"></div><div class="tyre-code">C2</div><div class="tyre-name">Control</div><div class="tyre-desc">Bình tĩnh • Ổn định</div></div>
+                                <div class="tyre-card active" data-tyre="C3"><div class="tyre-ring"></div><div class="tyre-code">C3</div><div class="tyre-name">Balanced</div><div class="tyre-desc">Cân bằng</div></div>
+                                <div class="tyre-card" data-tyre="C4"><div class="tyre-ring"></div><div class="tyre-code">C4</div><div class="tyre-name">Attack</div><div class="tyre-desc">Nhanh • Chắc</div></div>
+                                <div class="tyre-card span2" data-tyre="C5"><div class="tyre-ring"></div><div class="tyre-code">C5</div><div class="tyre-name">Qualifying</div><div class="tyre-desc">Rất nhanh • Rất chắc</div></div>
+                                <div class="tyre-card span2" data-tyre="WET-I"><div class="tyre-ring"></div><div class="tyre-code">ADAPT</div><div class="tyre-name">Adaptive</div><div class="tyre-desc">Linh hoạt</div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header"><div class="ph-left">Fuel & ERS</div></div>
+                        <div class="panel-body">
+                            <div class="gauge-block">
+                                <div class="gauge-row"><span class="g-label">Fuel (Kiến thức)</span><span class="g-val" id="fuelVal">70%</span></div>
+                                <input type="range" id="fuel" min="10" max="100" value="70" step="5">
+                                <div class="gauge-bar"><div class="gauge-fill" id="fuelBar" style="width:70%;background:linear-gradient(90deg,#00867a,var(--primary));"></div></div>
+                            </div>
+                            <div class="gauge-block">
+                                <div class="gauge-row"><span class="g-label">ERS (Thể lực)</span><span class="g-val" id="ersVal">80%</span></div>
+                                <input type="range" id="ers" min="10" max="100" value="80" step="5">
+                                <div class="gauge-bar"><div class="gauge-fill" id="ersBar" style="width:80%;background:linear-gradient(90deg,#5a1fd6,var(--purple));"></div></div>
+                            </div>
+                            <div class="gauge-block">
+                                <div class="gauge-row"><span class="g-label">Focus (Tập trung)</span><span class="g-val" id="focusVal">75%</span></div>
+                                <input type="range" id="focus" min="10" max="100" value="75" step="5">
+                                <div class="gauge-bar"><div class="gauge-fill" id="focusBar" style="width:75%;background:linear-gradient(90deg,#b8860b,var(--accent2));"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header"><div class="ph-left">Race Settings</div></div>
+                        <div class="panel-body">
+                            <div class="field"><label>Thời gian (phút)</label><input type="number" id="stratTime" min="5" max="180" value="60"></div>
+                            <div class="field"><label>Số câu hỏi</label><input type="number" id="stratQuestions" min="1" max="120" value="40"></div>
+                            <div class="field"><label>Độ khó</label><div class="seg" id="diffSeg"><button data-diff="easy">Dễ</button><button data-diff="medium" class="active">Vừa</button><button data-diff="hard">Khó</button><button data-diff="elite">Elite</button></div></div>
+                            <div class="field"><label>Điều kiện</label><div class="seg" id="weatherSeg"><button data-weather="dry" class="active">Quang</button><button data-weather="cloudy">Áp lực</button><button data-weather="rain">Căng thẳng</button></div></div>
+                            <button class="btn mt-12" onclick="generateStrategy()">Generate Strategy</button>
+                        </div>
+                    </div>
+                </aside>
+                <section class="main">
+                    <div class="panel" id="strategyOutput" style="display:none;">
+                        <div class="panel-header"><div class="ph-left">Strategy Output</div></div>
+                        <div class="panel-body" id="strategyContent"></div>
+                    </div>
+                    <div class="panel" id="strategyPlaceholder">
+                        <div class="panel-body text-center" style="padding:60px 20px;">
+                            <div style="font-size:48px;margin-bottom:12px;">🎯</div>
+                            <h3 style="color:var(--text-dim);">Strategy Center</h3>
+                            <p style="color:var(--text-muted);font-size:var(--fs-sm);max-width:400px;margin:8px auto;">Thiết lập thông số bên trái và nhấn <strong style="color:var(--primary);">Generate Strategy</strong> để nhận chiến thuật thi đấu.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- STANDINGS -->
+        <div class="view" id="view-standings">
+            <div class="panel">
+                <div class="panel-header"><div class="ph-left">Driver Championship Standings</div><span class="ph-tag">2026-2027</span></div>
+                <div class="panel-body scroll-x">
+                    <table>
+                        <thead><tr><th>Pos</th><th>Driver</th><th>Class</th><th>Number</th><th>Rating</th><th>Wins</th><th>Podiums</th><th>Points</th></tr></thead>
+                        <tbody id="standingsBody">
+                            <tr><td colspan="8" class="text-center" style="padding:30px;color:var(--text-muted);">Chưa có dữ liệu. Hoàn thành các GP để xem bảng xếp hạng.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="panel mt-16">
+                <div class="panel-header"><div class="ph-left">Import / Export</div></div>
+                <div class="panel-body">
+                    <button class="btn-sm" onclick="exportData()">📥 Xuất CSV</button>
+                    <input type="file" id="importFile" accept=".csv" style="display:none;" onchange="importData(event)">
+                    <button class="btn-sm" onclick="document.getElementById('importFile').click();">📤 Nhập CSV</button>
+                    <button class="btn-sm btn-danger" onclick="resetAll()">🗑️ Reset Mùa Giải</button>
+                    <p class="helper mt-8">Dữ liệu được lưu tự động trên trình duyệt của bạn.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRAINING -->
+        <div class="view" id="view-training">
+            <div class="grid">
+                <aside class="sidebar">
+                    <div class="panel">
+                        <div class="panel-header"><div class="ph-left">Study Timer</div></div>
+                        <div class="panel-body text-center">
+                            <div class="timer-display" id="timerDisplay">00:00:00</div>
+                            <div class="flex-between mt-12">
+                                <button class="btn-sm" id="timerStartBtn" onclick="toggleTimer()">▶ Start</button>
+                                <button class="btn-sm" onclick="resetTimer()">↺ Reset</button>
+                            </div>
+                            <div class="field mt-12"><label>Thời lượng (phút)</label>
+                                <div class="seg"><button onclick="setTimerPreset(15)">15</button><button onclick="setTimerPreset(30)" class="active">30</button><button onclick="setTimerPreset(45)">45</button><button onclick="setTimerPreset(60)">60</button><button onclick="setTimerPreset(90)">90</button><button onclick="setTimerPreset(120)">120</button></div>
+                            </div>
+                            <div class="field mt-12"><label>Môn học</label><input type="text" id="timerSubject" placeholder="VD: Toán, Tiếng Anh..."></div>
+                            <div class="field"><label>Session Type</label><select id="timerSession"><option value="FP1">FP1 - Lý thuyết</option><option value="FP2">FP2 - Bài tập</option><option value="FP3">FP3 - Chữa lỗi</option><option value="Qualifying">Qualifying - Đề luyện</option></select></div>
+                            <button class="btn mt-8" onclick="logStudySession()">📝 Ghi nhận buổi học</button>
+                        </div>
+                    </div>
+                </aside>
+                <section class="main">
+                    <div class="panel">
+                        <div class="panel-header"><div class="ph-left">Study Log</div><span class="ph-tag" id="studyCount">0 sessions</span></div>
+                        <div class="panel-body scroll-x">
+                            <table><thead><tr><th>Time</th><th>Duration</th><th>Subject</th><th>Session</th><th>XP</th></tr></thead><tbody id="studyLogBody"><tr><td colspan="5" class="text-center" style="padding:20px;color:var(--text-muted);">Chưa có buổi học nào được ghi nhận.</td></tr></tbody></table>
+                        </div>
+                    </div>
+                    <div class="panel mt-16">
+                        <div class="panel-header"><div class="ph-left">XP Progress</div></div>
+                        <div class="panel-body">
+                            <div class="gauge-row"><span>Total XP</span><span class="g-val" id="totalXpVal">0</span></div>
+                            <div class="gauge-bar"><div class="gauge-fill" id="totalXpBar" style="width:0%;background:linear-gradient(90deg,var(--purple),var(--primary));"></div></div>
+                            <p class="helper">Mỗi 30 phút học = +10 XP. Hoàn thành đề = +40 XP.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- ACHIEVEMENTS -->
+        <div class="view" id="view-achievements">
+            <div class="panel">
+                <div class="panel-header"><div class="ph-left">Achievement Center</div><span class="ph-tag" id="achUnlocked">0/20</span></div>
+                <div class="panel-body">
+                    <div class="cards" id="achievementsGrid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROFILE -->
+        <div class="view" id="view-profile">
+            <div class="grid">
+                <aside class="sidebar">
+                    <div class="panel">
+                        <div class="panel-header"><div class="ph-left">Account Setup</div></div>
+                        <div class="panel-body">
+                            <div class="field"><label>Tên tay đua</label><input type="text" id="profileName" placeholder="Nhập tên" maxlength="30"></div>
+                            <div class="field"><label>Lớp</label><input type="text" id="profileClass" placeholder="VD: 9A1" maxlength="10"></div>
+                            <div class="field"><label>Số hiệu (Race Number)</label><input type="number" id="profileNumber" min="1" max="99" value="26"></div>
+                            <div class="field"><label>Mục tiêu mùa giải</label><select id="profileGoal"><option value="world_champion">World Champion</option><option value="top3">Top 3</option><option value="top5">Top 5</option><option value="top10">Top 10</option><option value="improve">Cải thiện Rating</option></select></div>
+                            <button class="btn" onclick="saveProfile()">💾 Lưu Hồ Sơ</button>
+                            <p class="helper mt-8">Dữ liệu được lưu trên trình duyệt của bạn.</p>
+                        </div>
+                    </div>
+                </aside>
+                <section class="main">
+                    <div class="panel">
+                        <div class="panel-header"><div class="ph-left">Season Statistics</div></div>
+                        <div class="panel-body">
+                            <div class="cards">
+                                <div class="card" style="--ic:var(--accent2);"><h4>Wins</h4><div class="val" id="statWins">0</div></div>
+                                <div class="card" style="--ic:var(--primary);"><h4>Podiums</h4><div class="val" id="statPodiums">0</div></div>
+                                <div class="card" style="--ic:var(--purple);"><h4>Pole Positions</h4><div class="val" id="statPoles">0</div></div>
+                                <div class="card" style="--ic:var(--success);"><h4>Fastest Laps</h4><div class="val" id="statFastest">0</div></div>
+                                <div class="card" style="--ic:var(--warning);"><h4>DNFs</h4><div class="val" id="statDNF">0</div></div>
+                                <div class="card" style="--ic:var(--accent2);"><h4>Total Points</h4><div class="val" id="statPoints">0</div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel mt-16">
+                        <div class="panel-header"><div class="ph-left">GP History</div></div>
+                        <div class="panel-body scroll-x" id="gpHistory">
+                            <p style="color:var(--text-muted);font-size:var(--fs-sm);">Hoàn thành các GP để xem lịch sử.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-flags">
+                <span style="background:var(--primary)"></span><span style="background:var(--accent2)"></span>
+                <span style="background:var(--success)"></span><span style="background:var(--danger)"></span>
+                <span style="background:var(--purple)"></span>
+            </div>
+            <div>F1 STUDY CAREER MODE 2026-2027</div>
+            <div style="opacity:0.6;">Inspired by F1 TV • Công cụ hỗ trợ học tập</div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="gpModal" style="display:none;">
+        <div class="modal" id="gpModalContent"></div>
+    </div>
+
+    <div class="toast-wrap" id="toastWrap"></div>
+
+    <script>
+        /* ============================================================
+           F1 STUDY CAREER MODE 2026-2027 - COMPLETE APPLICATION
+           ============================================================ */
+
+        const POINTS_TABLE = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
+        const BONUS_POLE = 2;
+        const BONUS_FASTEST = 1;
+        const BONUS_PERFECT = 5;
+        const BONUS_NO_EASY_ERROR = 2;
+        const BONUS_EARLY_FINISH = 2;
+        const XP_PER_30MIN = 10;
+        const XP_PER_HOUR = 25;
+        const XP_COMPLETE_TEST = 40;
+        const XP_REVIEW = 35;
+        const XP_WIN = 100;
+
+        const GP_DATA = [
+            { id: 1, name: 'Australian GP', flag: '🇦🇺', event: 'Khảo sát đầu năm', type: 'Test' },
+            { id: 2, name: 'Chinese GP', flag: '🇨🇳', event: 'Giữa kỳ I', type: 'Exam' },
+            { id: 3, name: 'Japanese GP', flag: '🇯🇵', event: 'Cuối kỳ I', type: 'Exam' },
+            { id: 4, name: 'Bahrain GP', flag: '🇧🇭', event: 'Sơ loại IOE', type: 'Competition' },
+            { id: 5, name: 'Saudi Arabian GP', flag: '🇸🇦', event: 'Sơ loại Violympic', type: 'Competition' },
+            { id: 6, name: 'Miami GP', flag: '🇺🇸', event: 'Sơ loại VioEdu', type: 'Competition' },
+            { id: 7, name: 'Emilia-Romagna GP', flag: '🇮🇹', event: 'IOE cấp trường', type: 'Competition' },
+            { id: 8, name: 'Monaco GP', flag: '🇲🇨', event: 'Violympic cấp trường', type: 'Competition' },
+            { id: 9, name: 'Spanish GP', flag: '🇪🇸', event: 'VioEdu cấp trường', type: 'Competition' },
+            { id: 10, name: 'Canadian GP', flag: '🇨🇦', event: 'IOE cấp huyện', type: 'Competition' },
+            { id: 11, name: 'Austrian GP', flag: '🇦🇹', event: 'Violympic cấp huyện', type: 'Competition' },
+            { id: 12, name: 'British GP', flag: '🇬🇧', event: 'VioEdu cấp huyện', type: 'Competition' },
+            { id: 13, name: 'Belgian GP', flag: '🇧🇪', event: 'Giữa kỳ II', type: 'Exam' },
+            { id: 14, name: 'Hungarian GP', flag: '🇭🇺', event: 'IOE cấp tỉnh', type: 'Competition' },
+            { id: 15, name: 'Dutch GP', flag: '🇳🇱', event: 'Violympic cấp tỉnh', type: 'Competition' },
+            { id: 16, name: 'Italian GP', flag: '🇮🇹', event: 'VioEdu cấp tỉnh', type: 'Competition' },
+            { id: 17, name: 'Azerbaijan GP', flag: '🇦🇿', event: 'HSG huyện', type: 'HSG' },
+            { id: 18, name: 'Singapore GP', flag: '🇸🇬', event: 'IOE Quốc gia', type: 'National' },
+            { id: 19, name: 'United States GP', flag: '🇺🇸', event: 'Violympic Quốc gia', type: 'National' },
+            { id: 20, name: 'Mexico GP', flag: '🇲🇽', event: 'VioEdu Chung kết 3 miền', type: 'Final' },
+            { id: 21, name: 'São Paulo GP', flag: '🇧🇷', event: 'VioEdu Chung kết toàn quốc', type: 'Final' },
+            { id: 22, name: 'Las Vegas GP', flag: '🇺🇸', event: 'Cuối kỳ II', type: 'Exam' },
+            { id: 23, name: 'Qatar GP', flag: '🇶🇦', event: 'HSG tỉnh', type: 'HSG' },
+            { id: 24, name: 'Abu Dhabi GP', flag: '🇦🇪', event: 'Chung kết mùa giải', type: 'Final' }
+        ];
+
+        const ACHIEVEMENTS = [
+            { id: 'rookie_winner', name: '🏆 Rookie Winner', cond: 'Chiến thắng đầu tiên', check: (s) => s.wins >= 1 },
+            { id: 'first_podium', name: '🥈 First Podium', cond: 'Top 3 lần đầu', check: (s) => s.podiums >= 1 },
+            { id: 'pole_master', name: '⚡ Pole Master', cond: '5 Pole Position', check: (s) => s.poles >= 5 },
+            { id: 'fastest_learner', name: '🚀 Fastest Learner', cond: 'XP ≥ 500', check: (s) => s.xp >= 500 },
+            { id: 'perfect_weekend', name: '🎯 Perfect Weekend', cond: '100% + Win', check: (s) => s.perfectWins >= 1 },
+            { id: 'grand_slam', name: '👑 Grand Slam', cond: 'Pole + Win + Fastest Lap', check: (s) => s.grandSlams >= 1 },
+            { id: 'consistency', name: '💎 Consistency King', cond: '10 GP không DNF', check: (s) => s.consecutiveFinishes >= 10 },
+            { id: 'strategy_master', name: '🧠 Strategy Master', cond: '5 lần chọn đúng compound', check: (s) => s.strategyWins >= 5 },
+            { id: 'study_beast', name: '📚 Study Beast', cond: 'Tổng 100 giờ học', check: (s) => s.totalStudyMinutes >= 6000 },
+            { id: 'national_qualifier', name: '🏅 National Qualifier', cond: 'Tham gia kỳ thi Quốc gia', check: (s) => s.nationalRaces >= 1 },
+            { id: 'provincial_champ', name: '🏆 Provincial Champion', cond: 'Vô địch cấp Tỉnh', check: (s) => s.provincialWins >= 1 },
+            { id: 'hat_trick', name: '🔥 Hat-trick', cond: 'Pole + Win + Fastest Lap', check: (s) => s.grandSlams >= 1 },
+            { id: 'xp_champion', name: '⭐ XP Champion', cond: 'XP ≥ 2000', check: (s) => s.xp >= 2000 },
+            { id: 'ironman', name: '🦾 Ironman', cond: 'Hoàn thành tất cả 24 GP', check: (s) => s.finishedGPs >= 24 },
+            { id: 'comeback', name: '🔄 Comeback King', cond: 'DNF rồi Win GP sau', check: (s) => s.comebackWins >= 1 },
+            { id: 'top_scorer', name: '📊 Top Scorer', cond: 'Điểm trung bình ≥ 90%', check: (s) => s.avgScore >= 90 },
+            { id: 'early_bird', name: '🐦 Early Bird', cond: 'Hoàn thành sớm 5 lần', check: (s) => s.earlyFinishes >= 5 },
+            { id: 'no_mistake', name: '✅ Zero Mistake', cond: 'Không sai câu dễ 5 GP', check: (s) => s.noEasyErrors >= 5 },
+            { id: 'world_champion', name: '👑 World Champion', cond: 'Vô địch mùa giải', check: (s) => s.champion === true },
+            { id: 'legend', name: '🌟 Legend', cond: 'Rating ≥ 95', check: (s) => s.rating >= 95 }
+        ];
+
+        // ---------- STATE ----------
+        let profile = { name: '', class: '', number: 26, goal: 'world_champion' };
+        let stats = {
+            wins: 0, podiums: 0, poles: 0, fastestLaps: 0, dnfs: 0, perfectWins: 0,
+            grandSlams: 0, consecutiveFinishes: 0, strategyWins: 0, totalStudyMinutes: 0,
+            nationalRaces: 0, provincialWins: 0, finishedGPs: 0, comebackWins: 0,
+            avgScore: 0, earlyFinishes: 0, noEasyErrors: 0, champion: false,
+            rating: 50, xp: 0, totalPoints: 0, lastDNF: false
+        };
+        let calendar = GP_DATA.map(g => ({ ...g, status: 'pending', position: 0, points: 0, bonus: 0,
+            compound: 'C3', score: 0, pole: false, fastest: false, perfect: false, earlyFinish: false,
+            noEasyError: false }));
+        let studyLog = [];
+        let timerSeconds = 0,
+            timerRunning = false,
+            timerInterval = null;
+        let timerPreset = 30;
+        let selectedTyre = 'C3';
+        let selectedDifficulty = 'medium';
+        let selectedWeather = 'dry';
+        let unlockedAchievements = [];
+
+        // ---------- LOCAL STORAGE ----------
+        function saveAll() {
+            const data = { profile, stats, calendar, studyLog, unlockedAchievements };
+                        localStorage.setItem('f1_study_career', JSON.stringify(data));
+        }
+        function loadAll() {
+            const raw = localStorage.getItem('f1_study_career');
+            if (!raw) return;
+            try {
+                const data = JSON.parse(raw);
+                if (data.profile) profile = data.profile;
+                if (data.stats) stats = data.stats;
+                if (data.calendar) calendar = data.calendar;
+                if (data.studyLog) studyLog = data.studyLog;
+                if (data.unlockedAchievements) unlockedAchievements = data.unlockedAchievements;
+            } catch (e) { console.warn('Failed to load data, resetting...'); resetAll(); }
+        }
+        function resetAll() {
+            if (!confirm('Bạn có chắc muốn reset toàn bộ dữ liệu mùa giải? Hành động này không thể hoàn tác!')) return;
+            profile = { name: '', class: '', number: 26, goal: 'world_champion' };
+            stats = { wins: 0, podiums: 0, poles: 0, fastestLaps: 0, dnfs: 0, perfectWins: 0, grandSlams: 0,
+                consecutiveFinishes: 0, strategyWins: 0, totalStudyMinutes: 0, nationalRaces: 0,
+                provincialWins: 0, finishedGPs: 0, comebackWins: 0, avgScore: 0, earlyFinishes: 0,
+                noEasyErrors: 0, champion: false, rating: 50, xp: 0, totalPoints: 0, lastDNF: false };
+            calendar = GP_DATA.map(g => ({ ...g, status: 'pending', position: 0, points: 0, bonus: 0,
+                compound: 'C3', score: 0, pole: false, fastest: false, perfect: false, earlyFinish: false,
+                noEasyError: false }));
+            studyLog = [];
+            unlockedAchievements = [];
+            timerSeconds = 0;
+            timerRunning = false;
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = null;
+            saveAll();
+            refreshAll();
+            showToast('🔄 Dữ liệu đã được reset!');
+        }
+
+        // ---------- UTILS ----------
+        function showToast(msg) {
+            const wrap = document.getElementById('toastWrap');
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.textContent = msg;
+            wrap.appendChild(t);
+            setTimeout(() => { if (t.parentNode) t.parentNode.removeChild(t); }, 3300);
+        }
+        function getRatingLabel(r) {
+            if (r >= 100) return 'World Champion';
+            if (r >= 95) return 'Diamond';
+            if (r >= 90) return 'Platinum';
+            if (r >= 80) return 'Gold';
+            if (r >= 70) return 'Silver';
+            if (r >= 60) return 'Bronze';
+            return 'Rookie';
+        }
+        function getInitials(name) {
+            if (!name || !name.trim()) return 'DR';
+            return name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'DR';
+        }
+
+        // ---------- CLOCK ----------
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('liveClock').textContent =
+                `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ---------- NAVIGATION ----------
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                const target = document.getElementById('view-' + tab.dataset.view);
+                if (target) { target.classList.add('active');
+                    refreshView(tab.dataset.view); }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        function refreshView(viewName) {
+            switch (viewName) {
+                case 'dashboard':
+                    refreshDashboard();
+                    break;
+                case 'calendar':
+                    renderCalendar();
+                    break;
+                case 'standings':
+                    renderStandings();
+                    break;
+                case 'training':
+                    renderTraining();
+                    break;
+                case 'achievements':
+                    renderAchievements();
+                    break;
+                case 'profile':
+                    refreshProfile();
+                    break;
+                case 'strategy':
+                    break;
+            }
+        }
+
+        function refreshAll() {
+            refreshDashboard();
+            renderCalendar();
+            renderStandings();
+            renderTraining();
+            renderAchievements();
+            refreshProfile();
+            updateTopBar();
+        }
+
+        function updateTopBar() {
+            const initials = getInitials(profile.name);
+            document.getElementById('topAvatar').textContent = initials;
+            document.getElementById('topDriverName').textContent = profile.name || 'Driver';
+        }
+
+        // ---------- DASHBOARD ----------
+        function refreshDashboard() {
+            const rl = getRatingLabel(stats.rating);
+            document.getElementById('dashAvatar').textContent = getInitials(profile.name);
+            document.getElementById('dashName').textContent = profile.name || 'Driver';
+            document.getElementById('dashClass').textContent = 'Lớp: ' + (profile.class || '--');
+            document.getElementById('dashNumber').textContent = '#' + (profile.number || 26);
+            document.getElementById('dashRatingVal').textContent = stats.rating;
+            document.getElementById('dashRatingBar').style.width = Math.min(100, stats.rating) + '%';
+            document.getElementById('dashRatingLabel').textContent = rl;
+            document.getElementById('dashXpVal').textContent = stats.xp;
+            document.getElementById('dashXpBar').style.width = Math.min(100, (stats.xp / 20)) + '%';
+            document.getElementById('dashWins').textContent = stats.wins;
+            document.getElementById('dashPodiums').textContent = stats.podiums;
+            document.getElementById('dashPoles').textContent = stats.poles;
+            document.getElementById('dashPoints').textContent = stats.totalPoints;
+
+            const finished = calendar.filter(g => g.status === 'finished').length;
+            document.getElementById('dashCompleted').innerHTML = finished + '<small>/24</small>';
+            document.getElementById('dashTotalPoints').textContent = stats.totalPoints;
+            document.getElementById('dashAchCount').innerHTML = unlockedAchievements.length + '<small>/20</small>';
+
+            // Championship position
+            const sorted = calendar.filter(g => g.status === 'finished').sort((a, b) => b.points - a.points);
+            if (sorted.length > 0) {
+                const pos = sorted.findIndex(g => g.points === sorted[0]?.points) + 1;
+                document.getElementById('dashChampPos').textContent = 'P' + pos;
+            } else {
+                document.getElementById('dashChampPos').textContent = '--';
+            }
+
+            // Upcoming GP
+            const nextGP = calendar.find(g => g.status === 'pending');
+            const upcomingDiv = document.getElementById('upcomingGP');
+            if (nextGP) {
+                upcomingDiv.innerHTML = `
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <span style="font-size:32px;">${nextGP.flag}</span>
+                <div>
+                  <strong style="font-size:var(--fs-md);">Round ${nextGP.id}: ${nextGP.name}</strong>
+                  <p style="color:var(--text-muted);font-size:var(--fs-sm);">${nextGP.event} • ${nextGP.type}</p>
+                </div>
+                <button class="btn-sm" style="margin-left:auto;" onclick="openGPModal(${nextGP.id})">📋 Chi tiết</button>
+              </div>`;
+            } else {
+                upcomingDiv.innerHTML =
+                    '<p style="color:var(--success);font-weight:600;">🏁 Mùa giải đã hoàn thành! Xem báo cáo tổng kết.</p>';
+            }
+
+            // Recent results
+            const recent = calendar.filter(g => g.status === 'finished').slice(-5).reverse();
+            const recentDiv = document.getElementById('recentResults');
+            if (recent.length === 0) {
+                recentDiv.innerHTML =
+                    '<p style="color:var(--text-muted);font-size:var(--fs-sm);">Chưa có kết quả nào. Hãy bắt đầu mùa giải!</p>';
+            } else {
+                recentDiv.innerHTML = '<table><thead><tr><th>GP</th><th>Hạng</th><th>Điểm</th><th>Bonus</th></tr></thead><tbody>' +
+                    recent.map(g => `
+                <tr>
+                  <td>${g.flag} ${g.name}</td>
+                  <td><span class="pos-badge ${g.position===1?'p1':g.position===2?'p2':g.position===3?'p3':''}">${g.position||'-'}</span></td>
+                  <td class="pts">${g.points}</td>
+                  <td style="color:var(--accent2);">+${g.bonus||0}</td>
+                </tr>`).join('') + '</tbody></table>';
+            }
+        }
+
+        // ---------- CALENDAR ----------
+        function renderCalendar() {
+            const tbody = document.getElementById('calendarBody');
+            tbody.innerHTML = calendar.map(g => {
+                const posClass = g.position === 1 ? 'p1' : g.position === 2 ? 'p2' : g.position === 3 ? 'p3' :
+                    '';
+                const statusClass = g.status === 'finished' ? 'finished' : g.status === 'dnf' ? 'dnf' : g
+                    .status === 'dnq' ? 'dnq' : 'pending';
+                const statusText = g.status === 'finished' ? '✅ Hoàn thành' : g.status === 'dnf' ? '❌ DNF' : g
+                    .status === 'dnq' ? '⚠️ DNQ' : '⏳ Chưa thi';
+                return `
+              <tr>
+                <td><strong>${g.id}</strong></td>
+                <td>${g.flag} ${g.name}</td>
+                <td style="font-size:var(--fs-xs);">${g.event}</td>
+                <td><span class="gp-status ${statusClass}">${statusText}</span></td>
+                <td>${g.position ? '<span class="pos-badge '+posClass+'">'+g.position+'</span>' : '-'}</td>
+                <td class="pts">${g.points || 0}</td>
+                <td style="color:var(--accent2);">${g.bonus ? '+'+g.bonus : '-'}</td>
+                <td>
+                  <button class="btn-sm btn-xs" onclick="openGPModal(${g.id})">📋</button>
+                  ${g.status==='pending' ? '<button class="btn-sm btn-xs btn-success" onclick="quickFinish('+g.id+')">🏁</button>' : ''}
+                </td>
+              </tr>`;
+            }).join('');
+        }
+
+        // ---------- GP MODAL ----------
+        function openGPModal(gpId) {
+            const gp = calendar.find(g => g.id === gpId);
+            if (!gp) return;
+            const modal = document.getElementById('gpModal');
+            const content = document.getElementById('gpModalContent');
+            const isFinished = gp.status === 'finished';
+            content.innerHTML = `
+            <h3>${gp.flag} ${gp.name} — Round ${gp.id}/24</h3>
+            <p style="color:var(--text-muted);margin-bottom:12px;">${gp.event} • ${gp.type}</p>
+            ${isFinished ? `
+              <div class="cards">
+                <div class="card" style="--ic:var(--accent2);"><h4>Position</h4><div class="val">P${gp.position}</div></div>
+                <div class="card" style="--ic:var(--primary);"><h4>Points</h4><div class="val">${gp.points}</div></div>
+                <div class="card" style="--ic:var(--success);"><h4>Bonus</h4><div class="val">+${gp.bonus||0}</div></div>
+                <div class="card" style="--ic:var(--purple);"><h4>Compound</h4><div class="val">${gp.compound}</div></div>
+              </div>
+              <p style="color:var(--text-muted);font-size:var(--fs-sm);">Score: ${gp.score||0}% | Pole: ${gp.pole?'✅':'❌'} | Fastest Lap: ${gp.fastest?'✅':'❌'} | Perfect: ${gp.perfect?'✅':'❌'}</p>
+            ` : `
+              <div class="field"><label>Kết quả (Hạng)</label>
+                <select id="gpPosition">
+                  <option value="">-- Chọn hạng --</option>
+                  <option value="1">P1 🥇</option><option value="2">P2 🥈</option><option value="3">P3 🥉</option>
+                  <option value="4">P4</option><option value="5">P5</option><option value="6">P6</option>
+                  <option value="7">P7</option><option value="8">P8</option><option value="9">P9</option><option value="10">P10</option>
+                </select>
+              </div>
+              <div class="field"><label>Điểm số (%)</label><input type="number" id="gpScore" min="0" max="100" value="85"></div>
+              <div class="field"><label>Compound đã dùng</label>
+                <select id="gpCompound">
+                  <option value="C1">C1 Precision</option><option value="C2">C2 Control</option>
+                  <option value="C3" selected>C3 Balanced</option><option value="C4">C4 Attack</option>
+                  <option value="C5">C5 Qualifying</option><option value="WET-I">ADAPT Adaptive</option>
+                </select>
+              </div>
+              <div class="field"><label>Bonus</label>
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                  <label style="display:flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;font-weight:400;">
+                    <input type="checkbox" id="gpPole"> 🟣 Pole Position (+2)
+                  </label>
+                  <label style="display:flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;font-weight:400;">
+                    <input type="checkbox" id="gpFastest"> 🟢 Fastest Lap (+1)
+                  </label>
+                  <label style="display:flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;font-weight:400;">
+                    <input type="checkbox" id="gpPerfect"> 🔥 Perfect Score (+5)
+                  </label>
+                  <label style="display:flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;font-weight:400;">
+                    <input type="checkbox" id="gpNoEasyError"> ⭐ Không sai câu dễ (+2)
+                  </label>
+                  <label style="display:flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;font-weight:400;">
+                    <input type="checkbox" id="gpEarlyFinish"> 🎯 Hoàn thành sớm (+2)
+                  </label>
+                </div>
+              </div>
+              <div class="flex-between mt-12">
+                <button class="btn-sm btn-danger" onclick="setGPStatus(${gp.id},'dnf')">❌ DNF</button>
+                <button class="btn-sm btn-danger" onclick="setGPStatus(${gp.id},'dnq')">⚠️ DNQ</button>
+                <button class="btn" style="width:auto;" onclick="submitGPResult(${gp.id})">🏁 Xác nhận kết quả</button>
+              </div>
+            `}
+            <button class="btn-sm mt-12" style="width:100%;" onclick="closeGPModal()">Đóng</button>
+          `;
+            modal.style.display = 'flex';
+        }
+
+        function closeGPModal() {
+            document.getElementById('gpModal').style.display = 'none';
+        }
+
+        function setGPStatus(gpId, status) {
+            const gp = calendar.find(g => g.id === gpId);
+            if (!gp) return;
+            gp.status = status;
+            gp.position = 0;
+            gp.points = 0;
+            gp.bonus = 0;
+            if (status === 'dnf') { stats.dnfs++;
+                stats.lastDNF = true;
+                stats.consecutiveFinishes = 0; }
+            if (status === 'dnq') { stats.dnfs++;
+                stats.lastDNF = true;
+                stats.consecutiveFinishes = 0; }
+            recalcStats();
+            saveAll();
+            refreshAll();
+            closeGPModal();
+            showToast(`${gp.name}: ${status.toUpperCase()}!`);
+        }
+
+        function submitGPResult(gpId) {
+            const gp = calendar.find(g => g.id === gpId);
+            if (!gp) return;
+            const posEl = document.getElementById('gpPosition');
+            const scoreEl = document.getElementById('gpScore');
+            const compoundEl = document.getElementById('gpCompound');
+            if (!posEl.value) { showToast('⚠️ Vui lòng chọn hạng!'); return; }
+            const position = parseInt(posEl.value);
+            const score = parseInt(scoreEl.value) || 0;
+            const compound = compoundEl.value;
+            const pole = document.getElementById('gpPole')?.checked || false;
+            const fastest = document.getElementById('gpFastest')?.checked || false;
+            const perfect = document.getElementById('gpPerfect')?.checked || false;
+            const noEasyError = document.getElementById('gpNoEasyError')?.checked || false;
+            const earlyFinish = document.getElementById('gpEarlyFinish')?.checked || false;
+
+            let points = POINTS_TABLE[position - 1] || 0;
+            let bonus = 0;
+            if (pole) bonus += BONUS_POLE;
+            if (fastest) bonus += BONUS_FASTEST;
+            if (perfect) bonus += BONUS_PERFECT;
+            if (noEasyError) bonus += BONUS_NO_EASY_ERROR;
+            if (earlyFinish) bonus += BONUS_EARLY_FINISH;
+
+            gp.status = 'finished';
+            gp.position = position;
+            gp.points = points + bonus;
+            gp.bonus = bonus;
+            gp.score = score;
+            gp.compound = compound;
+            gp.pole = pole;
+            gp.fastest = fastest;
+            gp.perfect = perfect;
+            gp.noEasyError = noEasyError;
+            gp.earlyFinish = earlyFinish;
+
+            // Update stats
+            if (position === 1) { stats.wins++;
+                stats.xp += XP_WIN; if (stats.lastDNF) { stats.comebackWins++;
+                stats.lastDNF = false; } }
+            if (position <= 3) stats.podiums++;
+            if (pole) stats.poles++;
+            if (fastest) stats.fastestLaps++;
+            if (perfect) stats.perfectWins++;
+            if (pole && position === 1 && fastest) stats.grandSlams++;
+            if (earlyFinish) stats.earlyFinishes++;
+            if (noEasyError) stats.noEasyErrors++;
+            stats.consecutiveFinishes++;
+            stats.finishedGPs++;
+            stats.lastDNF = false;
+            stats.totalPoints += (points + bonus);
+
+            // National races
+            if (gp.type === 'National' || gp.type === 'Final') stats.nationalRaces++;
+            if ((gp.type === 'Competition' || gp.type === 'HSG') && position === 1 && gp.event.includes('tỉnh'))
+                stats.provincialWins++;
+
+            // Rating update
+            if (position === 1) stats.rating = Math.min(100, stats.rating + 3);
+            else if (position <= 3) stats.rating = Math.min(100, stats.rating + 2);
+            else if (position <= 10) stats.rating = Math.min(100, stats.rating + 1);
+            if (score < 50) stats.rating = Math.max(10, stats.rating - 2);
+            if (score >= 95) stats.rating = Math.min(100, stats.rating + 1);
+
+            // Check champion
+            if (gp.id === 24 && position === 1) stats.champion = true;
+
+            // Avg score
+            const finishedGPs = calendar.filter(g => g.status === 'finished' && g.score > 0);
+            if (finishedGPs.length > 0) {
+                stats.avgScore = Math.round(finishedGPs.reduce((a, b) => a + b.score, 0) / finishedGPs.length);
+            }
+
+            recalcStats();
+            checkAchievements();
+            saveAll();
+            refreshAll();
+            closeGPModal();
+            showToast(`🏁 ${gp.name}: P${position} — ${points+bonus} điểm!`);
+        }
+
+        function quickFinish(gpId) {
+            const gp = calendar.find(g => g.id === gpId);
+            if (!gp || gp.status !== 'pending') return;
+            // Quick finish with default values
+            gp.status = 'finished';
+            gp.position = 5;
+            gp.points = 10;
+            gp.bonus = 0;
+            gp.score = 75;
+            gp.compound = 'C3';
+            stats.finishedGPs++;
+            stats.consecutiveFinishes++;
+            stats.totalPoints += 10;
+            stats.lastDNF = false;
+            recalcStats();
+            saveAll();
+            refreshAll();
+            showToast(`🏁 ${gp.name}: Quick Finish P5 — 10 điểm!`);
+        }
+
+        function recalcStats() {
+            const finished = calendar.filter(g => g.status === 'finished');
+            stats.wins = finished.filter(g => g.position === 1).length;
+            stats.podiums = finished.filter(g => g.position <= 3).length;
+            stats.poles = finished.filter(g => g.pole).length;
+            stats.fastestLaps = finished.filter(g => g.fastest).length;
+            stats.perfectWins = finished.filter(g => g.perfect).length;
+            stats.grandSlams = finished.filter(g => g.pole && g.position === 1 && g.fastest).length;
+            stats.finishedGPs = finished.length;
+            stats.dnfs = calendar.filter(g => g.status === 'dnf' || g.status === 'dnq').length;
+            stats.totalPoints = finished.reduce((a, b) => a + (b.points || 0), 0);
+            stats.earlyFinishes = finished.filter(g => g.earlyFinish).length;
+            stats.noEasyErrors = finished.filter(g => g.noEasyError).length;
+            stats.nationalRaces = finished.filter(g => g.type === 'National' || g.type === 'Final').length;
+            stats.provincialWins = finished.filter(g => (g.type === 'Competition' || g.type === 'HSG') && g
+                .position === 1 && g.event.includes('tỉnh')).length;
+            if (finished.length > 0) {
+                stats.avgScore = Math.round(finished.reduce((a, b) => a + (b.score || 0), 0) / finished.length);
+            }
+            // Consecutive finishes
+            let cons = 0;
+            for (let i = calendar.length - 1; i >= 0; i--) {
+                if (calendar[i].status === 'finished') cons++;
+                else break;
+            }
+            stats.consecutiveFinishes = cons;
+            // Champion check
+            if (calendar[23]?.status === 'finished' && calendar[23]?.position === 1) stats.champion = true;
+        }
+
+        // ---------- STANDINGS ----------
+        function renderStandings() {
+            const tbody = document.getElementById('standingsBody');
+            const finished = calendar.filter(g => g.status === 'finished');
+            if (finished.length === 0) {
+                tbody.innerHTML =
+                    '<tr><td colspan="8" class="text-center" style="padding:30px;color:var(--text-muted);">Chưa có dữ liệu. Hoàn thành các GP để xem bảng xếp hạng.</td></tr>';
+                return;
+            }
+            const sorted = [...finished].sort((a, b) => b.points - a.points);
+            tbody.innerHTML = sorted.map((g, i) => {
+                const posClass = i === 0 ? 'p1' : i === 1 ? 'p2' : i === 2 ? 'p3' : '';
+                return `
+              <tr>
+                <td><span class="pos-badge ${posClass}">${i+1}</span></td>
+                <td>${profile.name||'Driver'}</td>
+                <td>${profile.class||'--'}</td>
+                <td>#${profile.number||26}</td>
+                <td>${stats.rating} (${getRatingLabel(stats.rating)})</td>
+                <td>${stats.wins}</td>
+                <td>${stats.podiums}</td>
+                <td class="pts">${g.points}</td>
+              </tr>`;
+            }).join('');
+        }
+
+        // ---------- TRAINING ----------
+        function renderTraining() {
+            document.getElementById('timerDisplay').textContent = formatTimer(timerSeconds);
+            document.getElementById('totalXpVal').textContent = stats.xp;
+            document.getElementById('totalXpBar').style.width = Math.min(100, (stats.xp / 20)) + '%';
+            document.getElementById('studyCount').textContent = studyLog.length + ' sessions';
+
+            const logBody = document.getElementById('studyLogBody');
+            if (studyLog.length === 0) {
+                logBody.innerHTML =
+                    '<tr><td colspan="5" class="text-center" style="padding:20px;color:var(--text-muted);">Chưa có buổi học nào được ghi nhận.</td></tr>';
+            } else {
+                logBody.innerHTML = studyLog.slice(-20).reverse().map(s => `
+              <tr>
+                <td>${s.time}</td>
+                <td>${s.duration} phút</td>
+                <td>${s.subject||'--'}</td>
+                <td>${s.session}</td>
+                <td style="color:var(--primary-light);">+${s.xp}</td>
+              </tr>`).join('');
+            }
+        }
+
+        function formatTimer(sec) {
+            const h = Math.floor(sec / 3600);
+            const m = Math.floor((sec % 3600) / 60);
+            const s = sec % 60;
+            return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        }
+
+        function toggleTimer() {
+            if (timerRunning) {
+                stopTimer();
+            } else {
+                startTimer();
+            }
+        }
+
+        function startTimer() {
+            if (timerRunning) return;
+            timerRunning = true;
+            document.getElementById('timerStartBtn').textContent = '⏸ Pause';
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                document.getElementById('timerDisplay').textContent = formatTimer(timerSeconds);
+            }, 1000);
+        }
+
+        function stopTimer() {
+            timerRunning = false;
+            document.getElementById('timerStartBtn').textContent = '▶ Start';
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        function resetTimer() {
+            stopTimer();
+            timerSeconds = 0;
+            document.getElementById('timerDisplay').textContent = '00:00:00';
+        }
+
+        function setTimerPreset(min) {
+            timerPreset = min;
+            document.querySelectorAll('#view-training .seg button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function logStudySession() {
+            const duration = timerPreset;
+            const subject = document.getElementById('timerSubject').value.trim() || 'Không xác định';
+            const session = document.getElementById('timerSession').value;
+            let xp = 0;
+            if (duration >= 60) xp = Math.floor(duration / 60) * XP_PER_HOUR + Math.floor((duration % 60) / 30) *
+                XP_PER_30MIN;
+            else xp = Math.floor(duration / 30) * XP_PER_30MIN;
+            if (session === 'Qualifying') xp += XP_COMPLETE_TEST;
+            if (session === 'FP3') xp += XP_REVIEW;
+
+            const now = new Date();
+            const timeStr =
+                `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            studyLog.push({ time: timeStr, duration, subject, session, xp });
+            stats.xp += xp;
+            stats.totalStudyMinutes += duration;
+
+            // XP also increases rating slightly
+            if (stats.xp >= 100 && stats.xp % 100 < xp) stats.rating = Math.min(100, stats.rating + 1);
+
+            resetTimer();
+            saveAll();
+            renderTraining();
+            refreshDashboard();
+            checkAchievements();
+            showToast(`📝 Đã ghi nhận ${duration} phút học — +${xp} XP!`);
+        }
+
+        // ---------- ACHIEVEMENTS ----------
+        function renderAchievements() {
+            const grid = document.getElementById('achievementsGrid');
+            document.getElementById('achUnlocked').textContent = `${unlockedAchievements.length}/20`;
+            grid.innerHTML = ACHIEVEMENTS.map(a => {
+                const unlocked = unlockedAchievements.includes(a.id);
+                return `
+              <div class="ach-card ${unlocked?'unlocked':''}" style="opacity:${unlocked?'1':'0.5'}">
+                <div class="ach-icon">${a.name.split(' ')[0]}</div>
+                <div class="ach-name">${a.name}</div>
+                <div class="ach-cond">${a.cond}</div>
+                ${unlocked?'<div style="color:var(--accent2);font-size:9px;margin-top:4px;">✅ Đã mở khóa</div>':''}
+              </div>`;
+            }).join('');
+        }
+
+        function checkAchievements() {
+            let changed = false;
+            ACHIEVEMENTS.forEach(a => {
+                if (!unlockedAchievements.includes(a.id) && a.check(stats)) {
+                    unlockedAchievements.push(a.id);
+                    changed = true;
+                    showToast(`🏆 Achievement Unlocked: ${a.name}!`);
+                }
+            });
+            if (changed) { saveAll();
+                renderAchievements(); }
+        }
+
+        // ---------- PROFILE ----------
+        function refreshProfile() {
+            document.getElementById('profileName').value = profile.name || '';
+            document.getElementById('profileClass').value = profile.class || '';
+            document.getElementById('profileNumber').value = profile.number || 26;
+            document.getElementById('profileGoal').value = profile.goal || 'world_champion';
+            document.getElementById('statWins').textContent = stats.wins;
+            document.getElementById('statPodiums').textContent = stats.podiums;
+            document.getElementById('statPoles').textContent = stats.poles;
+            document.getElementById('statFastest').textContent = stats.fastestLaps;
+            document.getElementById('statDNF').textContent = stats.dnfs;
+            document.getElementById('statPoints').textContent = stats.totalPoints;
+
+            const historyDiv = document.getElementById('gpHistory');
+            const finished = calendar.filter(g => g.status === 'finished');
+            if (finished.length === 0) {
+                historyDiv.innerHTML =
+                    '<p style="color:var(--text-muted);font-size:var(--fs-sm);">Hoàn thành các GP để xem lịch sử.</p>';
+            } else {
+                historyDiv.innerHTML = '<table><thead><tr><th>GP</th><th>Hạng</th><th>Điểm</th><th>Score</th><th>Compound</th></tr></thead><tbody>' +
+                    finished.map(g => `
+                <tr>
+                  <td>${g.flag} ${g.name}</td>
+                  <td>P${g.position}</td>
+                  <td class="pts">${g.points}</td>
+                  <td>${g.score}%</td>
+                  <td>${g.compound}</td>
+                </tr>`).join('') + '</tbody></table>';
+            }
+        }
+
+        function saveProfile() {
+            profile.name = document.getElementById('profileName').value.trim();
+            profile.class = document.getElementById('profileClass').value.trim();
+            profile.number = parseInt(document.getElementById('profileNumber').value) || 26;
+            profile.goal = document.getElementById('profileGoal').value;
+            saveAll();
+            refreshAll();
+            showToast('💾 Hồ sơ đã được lưu!');
+        }
+
+        // ---------- STRATEGY ----------
+        function generateStrategy() {
+            const time = Math.max(5, parseInt(document.getElementById('stratTime').value) || 60);
+            const questions = Math.max(1, parseInt(document.getElementById('stratQuestions').value) || 40);
+            const fuel = parseInt(document.getElementById('fuel').value);
+            const ers = parseInt(document.getElementById('ers').value);
+            const focus = parseInt(document.getElementById('focus').value);
+            const tyreData = { C1: { name: 'Precision', speed: 0.78 }, C2: { name: 'Control', speed: 0.9 }, C3: { name: 'Balanced',
+                    speed: 1.0 }, C4: { name: 'Attack', speed: 1.14 }, C5: { name: 'Qualifying', speed: 1.28 },
+                'WET-I': { name: 'Adaptive', speed: 0.85 } };
+            const tyre = tyreData[selectedTyre];
+            const diffMap = { easy: { e: 0.45, m: 0.35, h: 0.20 }, medium: { e: 0.35, m: 0.40, h: 0.25 }, hard: { e: 0.25,
+                    m: 0.40, h: 0.35 }, elite: { e: 0.18, m: 0.37, h: 0.45 } };
+            const diff = diffMap[selectedDifficulty];
+            const wxMod = { dry: 0, cloudy: -6, rain: -14 } [selectedWeather];
+
+            const easyTime = Math.round(time * diff.e);
+            const medTime = Math.round(time * diff.m);
+            const hardTime = time - easyTime - medTime;
+            const easyQ = Math.round(questions * diff.e);
+            const medQ = Math.round(questions * diff.m);
+            const hardQ = questions - easyQ - medQ;
+
+            let readiness = Math.round(fuel * 0.35 + ers * 0.30 + focus * 0.20 + 65 * 0.15 + wxMod * 0.4);
+            readiness = Math.min(100, Math.max(5, readiness));
+            const drs = (fuel >= 60 && ers >= 60 && focus >= 50);
+            const riskLevel = readiness < 45 ? 'CAO' : readiness < 70 ? 'TRUNG BÌNH' : 'THẤP';
+            const riskColor = readiness < 45 ? '#FF2D55' : readiness < 70 ? '#FFD700' : '#17E58C';
+
+            document.getElementById('strategyPlaceholder').style.display = 'none';
+            const output = document.getElementById('strategyOutput');
+            output.style.display = 'block';
+            document.getElementById('strategyContent').innerHTML = `
+            <div class="cards">
+              <div class="card" style="--ic:var(--primary);"><h4>Phase 1 • Dễ</h4><div class="val">${easyTime}<small>phút</small></div><div class="sub">~${easyQ} câu — Không sai câu nào</div></div>
+              <div class="card" style="--ic:var(--accent2);"><h4>Phase 2 • Trung bình</h4><div class="val">${medTime}<small>phút</small></div><div class="sub">~${medQ} câu — ${drs?'🟢 DRS Available':'DRS Locked'}</div></div>
+              <div class="card" style="--ic:var(--danger);"><h4>Phase 3 • Khó</h4><div class="val">${hardTime}<small>phút</small></div><div class="sub">~${hardQ} câu — Virtual Safety Car nếu bí</div></div>
+              <div class="card" style="--ic:var(--purple);"><h4>Readiness</h4><div class="val" style="color:${riskColor}">${readiness}<small>/100</small></div><div class="sub">Risk: ${riskLevel}</div></div>
+            </div>
+            <div style="background:var(--bg-panel2);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px;margin-top:10px;">
+              <h4 style="color:var(--primary);margin-bottom:8px;">🏎️ ${tyre.name} Strategy</h4>
+              <p style="font-size:var(--fs-sm);color:var(--text-muted);line-height:1.6;">
+                Thời gian mỗi câu: <strong>${(time/questions).toFixed(1)} phút</strong> • Nhịp độ: <strong>${tyre.speed>=1.15?'RẤT NHANH':tyre.speed>=1.0?'NHANH':tyre.speed>=0.85?'ỔN ĐỊNH':'THẬN TRỌNG'}</strong><br>
+                ${drs?'🟢 <strong>DRS khả dụng</strong> — Tăng tốc ở Phase 2.':'🔒 DRS chưa khả dụng — cần Fuel/ERS/Focus ≥ 60%.'}<br>
+                🛡️ Nếu bí câu khó → đánh dấu và chuyển sang câu khác ngay (Virtual Safety Car).
+              </p>
+            </div>`;
+            output.scrollIntoView({ behavior: 'smooth' });
+            showToast('✅ Chiến thuật đã được tạo!');
+        }
+
+        // ---------- TYRE SELECTION ----------
+        document.querySelectorAll('.tyre-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.tyre-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                selectedTyre = card.dataset.tyre;
+                document.getElementById('tyreTag').textContent = selectedTyre;
+            });
+        });
+
+        // ---------- GAUGE BINDINGS ----------
+        function bindGauge(sliderId, valId, barId) {
+            const s = document.getElementById(sliderId);
+            const v = document.getElementById(valId);
+            const b = document.getElementById(barId);
+            if (!s || !v || !b) return;
+            s.addEventListener('input', () => { v.textContent = s.value + '%';
+                b.style.width = s.value + '%'; });
+        }
+        bindGauge('fuel', 'fuelVal', 'fuelBar');
+        bindGauge('ers', 'ersVal', 'ersBar');
+        bindGauge('focus', 'focusVal', 'focusBar');
+
+        // ---------- SEGMENTED CONTROLS ----------
+        document.querySelectorAll('#diffSeg button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#diffSeg button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedDifficulty = btn.dataset.diff;
+            });
+        });
+        document.querySelectorAll('#weatherSeg button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#weatherSeg button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedWeather = btn.dataset.weather;
+            });
+        });
+
+        // ---------- EXPORT / IMPORT ----------
+        function exportData() {
+            const header = ['GP', 'Compound', 'Score', 'Position', 'Points', 'Bonus', 'Status'];
+            const rows = calendar.map(g => [g.name, g.compound, g.score, g.position, g.points, g.bonus, g.status]
+                .join(','));
+            const csv = [header.join(','), ...rows].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'f1_study_career_2026_2027.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('📥 Dữ liệu đã được xuất!');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                const content = e.target.result.trim().split('\n');
+                const data = content.slice(1).map(line => line.split(','));
+                data.forEach((row, idx) => {
+                    if (idx < calendar.length) {
+                        const gp = calendar[idx];
+                        gp.name = row[0] || gp.name;
+                        gp.compound = row[1] || 'C3';
+                        gp.score = parseInt(row[2]) || 0;
+                        gp.position = parseInt(row[3]) || 0;
+                        gp.points = parseInt(row[4]) || 0;
+                        gp.bonus = parseInt(row[5]) || 0;
+                        gp.status = row[6] || 'pending';
+                    }
+                });
+                recalcStats();
+                saveAll();
+                refreshAll();
+                showToast('📤 Dữ liệu CSV đã được nhập!');
+            };
+            reader.readAsText(file);
+        }
+
+        // ---------- KEYBOARD SHORTCUTS ----------
+        document.addEventListener('keydown', e => {
+            if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
+            if (e.key.toLowerCase() === 'g') {
+                const strategyView = document.getElementById('view-strategy');
+                if (strategyView && strategyView.classList.contains('active')) generateStrategy();
+            }
+            if (e.key.toLowerCase() === 't') {
+                const trainingView = document.getElementById('view-training');
+                if (trainingView && trainingView.classList.contains('active')) toggleTimer();
+            }
+        });
+
+        // ---------- MODAL CLOSE ON OVERLAY CLICK ----------
+        document.getElementById('gpModal').addEventListener('click', function(e) {
+            if (e.target === this) closeGPModal();
+        });
+
+        // ---------- INIT ----------
+        function init() {
+            loadAll();
+            refreshAll();
+            updateTopBar();
+            // Hide loading screen
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 1500);
+            // Auto-save every 30 seconds
+            setInterval(() => {
+                saveAll();
+            }, 30000);
+        }
+
+        init();
+        console.log('%c🏎️ F1 Study Career Mode 2026-2027', 'color:#3CC2F5;font-weight:800;font-size:18px;');
+        console.log('%c24 Grand Prix • Driver Rating • XP System • Achievements', 'color:#8B95AD;');
+        console.log('%cTất cả dữ liệu được lưu trên trình duyệt của bạn.', 'color:#17E58C;');
+    </script>
+</body>
+</html>
